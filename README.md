@@ -1,2 +1,4 @@
 # ai-hw2
-AI HW2
+Artifitial Intelligence HW2
+
+text classification in persian
