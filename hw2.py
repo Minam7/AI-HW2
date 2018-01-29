@@ -1,4 +1,6 @@
 import random
+from sklearn import svm
+import numpy as np
 
 
 class SupervisedData:
@@ -32,3 +34,12 @@ if __name__ == '__main__':
     print(len(train_set))
     print(len(validation_set))
     print(len(test_set))
+
+    # SVM chapter
+
+    X = None  # list of features for each data
+    y = [row[len(train_set) - 1] for row in train_set]  # list of labels
+
+    # Create the SVC model object
+    C = 1.0  # SVM regularization parameter
+    svc = svm.SVC(kernel='linear', C=C, decision_function_shape='ovr').fit(X, y)
