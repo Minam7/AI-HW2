@@ -83,8 +83,15 @@ if __name__ == '__main__':
     content = file.read().split('\n')
 
     ans = list()
+    log = ''
     for i in range(len(content)):
         ans.append(test_data(content[i]))
+        log += str(ans)
+        if i != len(content) - 1:
+            log += '\n'
+
+    file = open('data/labels.txt', 'w', encoding='utf-8')
+    file.write(log)
 
     label_addr = sys.argv[3]
     file = open(label_addr, 'r', encoding='utf-8')
