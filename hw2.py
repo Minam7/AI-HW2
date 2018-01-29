@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 
 import pickle
 import random
+from sklearn import svm
+import numpy as np
 
 import gensim
 import hazm
@@ -103,3 +105,12 @@ if __name__ == '__main__':
 
     pickle_in = open("test_set.pickle", "rb")
     test_set = pickle.load(pickle_in)
+
+    # SVM chapter
+
+    X = None  # list of features for each data
+    y = [row[len(train_set) - 1] for row in train_set]  # list of labels
+
+    # Create the SVC model object
+    C = 1.0  # SVM regularization parameter
+    svc = svm.SVC(kernel='linear', C=C, decision_function_shape='ovr').fit(X, y)
