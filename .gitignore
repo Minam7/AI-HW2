@@ -4,3 +4,7 @@ train.label
 train.content
 resources
 resources/*
+venv
+venv/*
+data
+data/*

@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 
 import pickle
 import random
+import _thread
 
 import gensim
 import hazm
 from sklearn import svm
+
+dic_data = dict()
 
 
 class SupervisedData:
@@ -14,7 +17,8 @@ class SupervisedData:
         self.label = lab
 
 
-def stem_data(dat):
+def stem_data(dat, index):
+    global dic_data
     normalizer = hazm.Normalizer()
     dat = normalizer.normalize(dat)
     sent = hazm.sent_tokenize(dat)
@@ -35,7 +39,7 @@ def stem_data(dat):
             if len(stemmed) > 0 and ('#' not in stemmed):
                 words.append(stemmed)
 
-    return words
+    dic_data[index] = words
 
 
 if __name__ == '__main__':
@@ -59,9 +63,12 @@ if __name__ == '__main__':
     docs_words = []
 
     for i in range(DATA_SIZE + 1):
+        _thread.start_new_thread(stem_data, content, i)
+
+    for i in range(DATA_SIZE + 1):
         paraph = content[i]
         datas.append(SupervisedData(content[i], tag[i]))
-        docs_words.append(stem_data(content[i]))
+        docs_words.append(dic_data[i])
 
     dictionary = gensim.corpora.Dictionary(docs_words)
     dictionary.save('files/lda_dictionary.dict')
@@ -82,27 +89,27 @@ if __name__ == '__main__':
     test_set = datas[TRAIN_SIZE + VALIDATION_SIZE + 1:]
 
     # saving objects
-    pickle_out = open("train_set.pickle", "wb")
+    pickle_out = open("files/train_set.pickle", "wb")
     pickle.dump(train_set, pickle_out)
     pickle_out.close()
 
-    pickle_out = open("validation_set.pickle", "wb")
+    pickle_out = open("files/validation_set.pickle", "wb")
     pickle.dump(validation_set, pickle_out)
     pickle_out.close()
 
-    pickle_out = open("test_set.pickle", "wb")
+    pickle_out = open("files/test_set.pickle", "wb")
     pickle.dump(test_set, pickle_out)
     pickle_out.close()
 
     # comment part above after saving objects for model learning and division
     # loading objects
-    pickle_in = open("train_set.pickle", "rb")
+    pickle_in = open("files/train_set.pickle", "rb")
     train_set = pickle.load(pickle_in)
 
-    pickle_in = open("validation_set.pickle", "rb")
+    pickle_in = open("files/validation_set.pickle", "rb")
     validation_set = pickle.load(pickle_in)
 
-    pickle_in = open("test_set.pickle", "rb")
+    pickle_in = open("files/test_set.pickle", "rb")
     test_set = pickle.load(pickle_in)
 
     # SVM chapter
@@ -112,4 +119,4 @@ if __name__ == '__main__':
 
     # Create the SVC model object
     C = 1.0  # SVM regularization parameter
-    svc = svm.SVC(kernel='linear', C=C, decision_function_shape='ovr').fit(X, y)
+    svc = svm.SVC(kernel='rbf', C=C, decision_function_shape='ovr').fit(X, y)
