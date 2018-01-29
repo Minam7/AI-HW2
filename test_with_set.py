@@ -1,5 +1,4 @@
 import pickle
-import random
 import sys
 
 import gensim
@@ -46,12 +45,10 @@ def test_data(dat):
     for item in lda_topics:
         tpcs[item[0]] = item[1]
 
-    #tpcs is what you want:D
-
-    # svm
-    # TODO
-    answ = random.randint(10)
-    return answ
+    pickle_in = open("files/svm.pickle", "rb")
+    svm = pickle.load(pickle_in)
+    answ = svm.decision_function([tpcs])
+    return answ.shape[1]
 
 
 def make_matrix(predict_data, real_data):
