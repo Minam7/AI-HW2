@@ -129,11 +129,16 @@ if __name__ == '__main__':
 
     # SVM chapter
 
-    X = None  # list of features for each data
+    X = [d.topics for d in datas]  # list of features for each data
     y = [row[len(train_set) - 1] for row in train_set]  # list of labels
 
     # Create the SVC model object
     C = 1.0  # SVM regularization parameter
     svc = svm.SVC(kernel='rbf', C=C, decision_function_shape='ovr').fit(X, y)
+
+    # saving svm model
+    pickle_out = open("files/svm.pickle", "wb")
+    pickle.dump(svc, pickle_out)
+    pickle_out.close()
 
     print('time: ', time.time() - start_time, "s")
