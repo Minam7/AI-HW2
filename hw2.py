@@ -2,11 +2,10 @@ from __future__ import unicode_literals
 
 import pickle
 import random
-from sklearn import svm
-import numpy as np
 
 import gensim
 import hazm
+from sklearn import svm
 
 
 class SupervisedData:
