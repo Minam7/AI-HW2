@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import pickle
 import random
-import _thread
+import time
 
 import gensim
 import hazm
@@ -15,13 +15,14 @@ class SupervisedData:
     def __init__(self, dat, lab):
         self.data = dat
         self.label = lab
+        self.topics = None
 
 
-def stem_data(dat, index):
-    global dic_data
+def stem_data(dat):
     normalizer = hazm.Normalizer()
     dat = normalizer.normalize(dat)
     sent = hazm.sent_tokenize(dat)
+
     words = []
 
     for s in sent:
@@ -31,18 +32,22 @@ def stem_data(dat, index):
         for token in tagged:
             if token[0] in stop_words:
                 new_tag.remove(token)
+
         lemmatizer = hazm.Lemmatizer()
         for token in new_tag:
+
             stemmed = lemmatizer.lemmatize(token[0], pos=token[1])
             stemmer = hazm.Stemmer()
             stemmed = stemmer.stem(stemmed)
             if len(stemmed) > 0 and ('#' not in stemmed):
                 words.append(stemmed)
 
-    dic_data[index] = words
+    return words
 
 
 if __name__ == '__main__':
+
+    start_time = time.time()
     DATA_SIZE = 7200
     TRAIN_SIZE = 4320
     VALIDATION_SIZE = 1440
@@ -63,12 +68,19 @@ if __name__ == '__main__':
     docs_words = []
 
     for i in range(DATA_SIZE + 1):
-        _thread.start_new_thread(stem_data, content, i)
-
-    for i in range(DATA_SIZE + 1):
         paraph = content[i]
         datas.append(SupervisedData(content[i], tag[i]))
-        docs_words.append(dic_data[i])
+        docs_words.append(stem_data(content[i]))
+
+    # saving objects
+    pickle_out = open("files/docs_words.pickle", "wb")
+    pickle.dump(docs_words, pickle_out)
+    pickle_out.close()
+
+    # saving objects
+    pickle_out = open("files/datas.pickle", "wb")
+    pickle.dump(datas, pickle_out)
+    pickle_out.close()
 
     dictionary = gensim.corpora.Dictionary(docs_words)
     dictionary.save('files/lda_dictionary.dict')
@@ -79,7 +91,10 @@ if __name__ == '__main__':
     ldamodel.save('files/lda.model')
 
     for i in range(DATA_SIZE + 1):
-        datas[i].data = ldamodel.get_document_topics(dictionary.doc2bow(docs_words[i]))
+        for item in ldamodel.get_document_topics(dictionary.doc2bow(docs_words[i])):
+            tpcs = [0 for x in range(100)]
+            tpcs[item[0]] = item[1]
+            datas[i].topics = tpcs
 
     # shuffle data for picking train, validation and test data
     random.shuffle(datas)
@@ -120,3 +135,5 @@ if __name__ == '__main__':
     # Create the SVC model object
     C = 1.0  # SVM regularization parameter
     svc = svm.SVC(kernel='rbf', C=C, decision_function_shape='ovr').fit(X, y)
+
+    print('time: ', time.time() - start_time, "s")
