@@ -2,3 +2,5 @@
 out
 train.label
 train.content
+resources
+resources/*
