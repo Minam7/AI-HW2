@@ -30,17 +30,16 @@ def stem_data(dat):
     return words
 
 
-def load_models():
-    ldamodel = gensim.models.LdaModel.load('files/lda.model')
-    dictionary = gensim.corpora.Dictionary.load('files/lda_dictionary.dict')
-    pickle_in = open("files/svm.pickle", "rb")
-    svc = pickle.load(pickle_in)
+def load_models(addr):
+    ldamodell = gensim.models.LdaModel.load('files/lda.model')
+    dictionaryl = gensim.corpora.Dictionary.load('files/lda_dictionary.dict')
+    pickle_in = open(addr, "rb")
+    svcl = pickle.load(pickle_in)
 
-    return ldamodel, dictionary, svc
+    return ldamodell, dictionaryl, svcl
 
 
 def test_data(dat):
-    ldamodel, dictionary, svc = load_models()
     corpus = dictionary.doc2bow(stem_data(dat))
     lda_topics = ldamodel.get_document_topics(corpus)
 
@@ -71,19 +70,22 @@ if __name__ == '__main__':
     print(make_matrix([1, 2, 0, 3, 1, 3], [3, 2, 0, 0, 1, 2]))
     print(make_recall_prec_fscore([1, 2, 0, 3, 1, 3], [3, 2, 0, 0, 1, 2]))
     '''
+    model_addr = sys.argv[1]
+    ldamodel, dictionary, svc = load_models(model_addr)
 
-    addr = sys.argv[1]
+    data_addr = sys.argv[2]
     tagger = hazm.POSTagger(model='resources/postagger.model')
     stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')
 
-    file = open(addr, 'r', encoding='utf-8')
+    file = open(data_addr, 'r', encoding='utf-8')
     content = file.read().split('\n')
 
     ans = list()
     for i in range(len(content)):
         ans.append(test_data(content[i]))
 
-    file = open('data/train.label', 'r', encoding='utf-8')
+    label_addr = sys.argv[3]
+    file = open(label_addr, 'r', encoding='utf-8')
     tag = file.read().split('\n')
 
     for i in range(len(tag)):
