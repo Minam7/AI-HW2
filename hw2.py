@@ -91,8 +91,8 @@ if __name__ == '__main__':
     ldamodel.save('files/lda.model')
 
     for i in range(DATA_SIZE + 1):
+        tpcs = [0 for x in range(100)]
         for item in ldamodel.get_document_topics(dictionary.doc2bow(docs_words[i])):
-            tpcs = [0 for x in range(100)]
             tpcs[item[0]] = item[1]
             datas[i].topics = tpcs
 

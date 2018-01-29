@@ -41,7 +41,12 @@ def load_models(addr):
 
 def test_data(dat):
     corpus = dictionary.doc2bow(stem_data(dat))
+    tpcs = [0 for x in range(100)]
     lda_topics = ldamodel.get_document_topics(corpus)
+    for item in lda_topics:
+        tpcs[item[0]] = item[1]
+
+    #tpcs is what you want:D
 
     # svm
     # TODO
