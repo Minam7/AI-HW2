@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import pickle
 import random
 import time
+import sys
 
 import gensim
 import hazm
@@ -54,13 +55,18 @@ if __name__ == '__main__':
     TEST_SIZE = 1440
 
     # code for first time
+    # data_addr = sys.argv[1]
+    # label_addr = sys.argv[2]
+
     # comment this part if you have saved objects
     tagger = hazm.POSTagger(model='resources/postagger.model')
     stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')
 
+    # file = open(data_addr, 'r', encoding='utf-8')
     file = open('data/train.content', 'r', encoding='utf-8')
     content = file.read().split('\n')
 
+    # file = open(label_addr, 'r', encoding='utf-8')
     file = open('data/train.label', 'r', encoding='utf-8')
     tag = file.read().split('\n')
 
