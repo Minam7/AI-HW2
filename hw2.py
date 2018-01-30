@@ -133,10 +133,10 @@ if __name__ == '__main__':
     # comment part above after saving objects for model learning and division
 
     # SVM chapter
-
-    X = [d.topics for d in datas]  # list of features for each data
-    y = [row[len(train_set) - 1] for row in train_set]  # list of labels
-
+    X = [d.topics for d in train_set]  # list of features for each data
+    y = [d.label for d in train_set]  # list of labels
+    print(X)
+    print(y)
     # Create the SVC model object
     C = 1.0  # SVM regularization parameter
     svc = svm.SVC(kernel='rbf', C=C, decision_function_shape='ovr').fit(X, y)
