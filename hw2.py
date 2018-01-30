@@ -1,13 +1,14 @@
 from __future__ import unicode_literals
 
 import pickle
-# import random
+import random
 import time
-# import sys
 
-# import gensim
-# import hazm
+import gensim
+import hazm
 from sklearn import svm
+
+# import sys
 
 dic_data = dict()
 
@@ -19,7 +20,6 @@ class SupervisedData:
         self.topics = None
 
 
-'''
 def stem_data(dat):
     normalizer = hazm.Normalizer()
     dat = normalizer.normalize(dat)
@@ -45,21 +45,19 @@ def stem_data(dat):
                 words.append(stemmed)
 
     return words
-'''
+
 
 if __name__ == '__main__':
-
     start_time = time.time()
-    DATA_SIZE = 7200
-    TRAIN_SIZE = 4320
-    VALIDATION_SIZE = 1440
-    TEST_SIZE = 1440
+    DATA_SIZE = 72000
+    TRAIN_SIZE = 43200
+    VALIDATION_SIZE = 14400
+    TEST_SIZE = 14400
 
     # code for first time
     # data_addr = sys.argv[1]
     # label_addr = sys.argv[2]
 
-    '''
     # comment this part if you have saved objects
     tagger = hazm.POSTagger(model='resources/postagger.model')
     stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')
@@ -95,8 +93,10 @@ if __name__ == '__main__':
 
     corpus = [dictionary.doc2bow(text) for text in docs_words]
 
+    '''
     ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=100, id2word=dictionary, passes=50)
     ldamodel.save('files/lda.model')
+    '''
 
     # load saved objects
     ldamodel = gensim.models.LdaModel.load('files/lda.model')
@@ -115,13 +115,11 @@ if __name__ == '__main__':
 
     # shuffle data for picking train, validation and test data
     random.shuffle(datas)
-    
-    
+
     # saving objects
     pickle_out = open("files/random_datas.pickle", "wb")
     pickle.dump(datas, pickle_out)
     pickle_out.close()
-    '''
 
     pickle_in = open("files/random_datas.pickle", "rb")
     datas = pickle.load(pickle_in)
