@@ -1,10 +1,16 @@
+import logging
 import pickle
-import sys
+import time
 
 import gensim
 import numpy as np
 import sklearn
 
+class SupervisedData:
+    def __init__(self, dat, lab):
+        self.data = dat
+        self.label = lab
+        self.topics = None
 
 def stem_data(dat):
     words = []
@@ -20,23 +26,16 @@ def stem_data(dat):
 def load_models(addr):
     ldamodell = gensim.models.LdaModel.load('files/lda.model')
     dictionaryl = gensim.corpora.Dictionary.load('files/lda_dictionary.dict')
-    pickle_in = open(addr, "rb")
-    svcl = pickle.load(pickle_in)
+    pickle_ins = open(addr, "rb")
+    svcl = pickle.load(pickle_ins)
 
     return ldamodell, dictionaryl, svcl
 
 
 def test_data(dat):
-    corpus = dictionary.doc2bow(stem_data(dat))
-    tpcs = [0 for x in range(100)]
-    lda_topics = ldamodel.get_document_topics(corpus)
-    for item in lda_topics:
-        tpcs[item[0]] = item[1]
-
-    pickle_in = open("files/svm.pickle", "rb")
-    svm = pickle.load(pickle_in)
-    answ = svm.decision_function([tpcs])
-    return answ.shape[1]
+    arr = np.array(dat.topics).reshape(1, -1)
+    answ = svm.decision_function(arr)
+    return answ[0]
 
 
 def make_matrix(predict_data, real_data):
@@ -56,33 +55,42 @@ def make_recall_prec_fscore(predict_data, real_data):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
+    DATA_SIZE = 72000
+    TRAIN_SIZE = 43200
+    VALIDATION_SIZE = 14400
+    TEST_SIZE = 14400
 
-    model_addr = sys.argv[1]
-    ldamodel, dictionary, svc = load_models(model_addr)
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    data_addr = sys.argv[2]
+    model_addr = 'files/svm.pickle'
+    ldamodel, dictionary, svm = load_models(model_addr)
+
     stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')
 
-    file = open(data_addr, 'r', encoding='utf-8')
-    content = file.read().split('\n')
+    pickle_in = open("files/random_datas.pickle", "rb")
+    datas = pickle.load(pickle_in)
+
+    train_set = datas[:TRAIN_SIZE]
+    validation_set = datas[TRAIN_SIZE + 1:TRAIN_SIZE + VALIDATION_SIZE + 1]
+    test_set = datas[TRAIN_SIZE + VALIDATION_SIZE + 1:]
 
     ans = list()
     log = ''
-    for i in range(len(content)):
-        ans.append(test_data(content[i]))
+    for i in range(10):
+        ans.append(test_data(test_set[i]))
         log += str(ans)
-        if i != len(content) - 1:
+        if i != 10:
             log += '\n'
 
     file = open('data/labels.txt', 'w', encoding='utf-8')
     file.write(log)
 
-    label_addr = sys.argv[3]
-    file = open(label_addr, 'r', encoding='utf-8')
-    tag = file.read().split('\n')
+    # label_addr = sys.argv[3]
 
-    for i in range(len(tag)):
-        tag[i] = int(tag[i])
+    tag = []
+    for i in range(10):
+        tag.append(test_set[i].label)
 
     cnfs_matrix = make_matrix(ans, tag)
     print(cnfs_matrix)
