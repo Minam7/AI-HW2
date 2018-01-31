@@ -2,13 +2,12 @@ from __future__ import unicode_literals
 
 import pickle
 import random
+import sys
 import time
 
 import gensim
 import hazm
 from sklearn import svm
-
-# import sys
 
 dic_data = dict()
 
@@ -55,8 +54,8 @@ if __name__ == '__main__':
     TEST_SIZE = 14400
 
     # code for first time
-    # data_addr = sys.argv[1]
-    # label_addr = sys.argv[2]
+    data_addr = sys.argv[1]
+    label_addr = sys.argv[2]
 
     # comment this part if you have saved objects
     tagger = hazm.POSTagger(model='resources/postagger.model')
@@ -93,11 +92,10 @@ if __name__ == '__main__':
 
     corpus = [dictionary.doc2bow(text) for text in docs_words]
 
-    '''
     ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=100, id2word=dictionary, passes=50)
     ldamodel.save('files/lda.model')
-    '''
 
+    '''
     # load saved objects
     ldamodel = gensim.models.LdaModel.load('files/lda.model')
     dictionary = gensim.corpora.Dictionary.load('files/lda_dictionary.dict')
@@ -106,6 +104,7 @@ if __name__ == '__main__':
 
     pickle_in = open("files/docs_words.pickle", "rb")
     docs_words = pickle.load(pickle_in)
+    '''
 
     for i in range(DATA_SIZE + 1):
         tpcs = [0 for x in range(100)]
@@ -121,8 +120,10 @@ if __name__ == '__main__':
     pickle.dump(datas, pickle_out)
     pickle_out.close()
 
+    '''
     pickle_in = open("files/random_datas.pickle", "rb")
     datas = pickle.load(pickle_in)
+    '''
 
     train_set = datas[:TRAIN_SIZE]
     validation_set = datas[TRAIN_SIZE + 1:TRAIN_SIZE + VALIDATION_SIZE + 1]

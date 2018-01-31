@@ -4,11 +4,10 @@ import logging
 import pickle
 import random
 import time
+import sys
 
 import gensim
 from sklearn import svm
-
-# import sys
 
 dic_data = dict()
 
@@ -41,8 +40,8 @@ if __name__ == '__main__':
     # comment if its not working
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    # data_addr = sys.argv[1]
-    # label_addr = sys.argv[2]
+    data_addr = sys.argv[1]
+    label_addr = sys.argv[2]
 
     # code for first time
     # comment this part if you have saved objects
