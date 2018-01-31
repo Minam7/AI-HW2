@@ -24,9 +24,10 @@ def load_models(addr):
 
 
 def test_data(dat):
-    arr = np.array(dat.topics).reshape(1, -1)
-    answ = svm.decision_function(arr)
-    print(answ[0])
+    # arr = np.array(dat.topics).reshape(1, -1)  # these two format are equal but format below is more readable!
+    arr = [dat.topics]
+    answ = svm.predict(arr)
+    print('answer is : ', answ[0])
     return answ[0]
 
 
