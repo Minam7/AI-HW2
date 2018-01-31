@@ -6,21 +6,12 @@ import gensim
 import numpy as np
 import sklearn
 
+
 class SupervisedData:
     def __init__(self, dat, lab):
         self.data = dat
         self.label = lab
         self.topics = None
-
-def stem_data(dat):
-    words = []
-    sent = dat.replace('.', '')
-    sent = sent.split(' ')
-    for iteme in sent:
-        if iteme not in stop_words:
-            words.append(iteme)
-
-    return words
 
 
 def load_models(addr):
@@ -35,6 +26,7 @@ def load_models(addr):
 def test_data(dat):
     arr = np.array(dat.topics).reshape(1, -1)
     answ = svm.decision_function(arr)
+    print(answ[0])
     return answ[0]
 
 
@@ -65,8 +57,6 @@ if __name__ == '__main__':
 
     model_addr = 'files/svm.pickle'
     ldamodel, dictionary, svm = load_models(model_addr)
-
-    stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')
 
     pickle_in = open("files/random_datas.pickle", "rb")
     datas = pickle.load(pickle_in)
