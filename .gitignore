@@ -8,7 +8,10 @@ venv
 venv/*
 data
 data/*
-files/*
+files/d*
+files/l*
+files/random_datas.pickle
+
 filestemmer/*
 
 # OS generated files #

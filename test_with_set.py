@@ -33,10 +33,8 @@ def test_data(dat):
     for item in lda_topics:
         tpcs[item[0]] = item[1]
 
-    pickle_in = open("files/svm.pickle", "rb")
-    svm = pickle.load(pickle_in)
-    answ = svm.decision_function([tpcs])
-    return answ.shape[1]
+    answ = svm.predict([tpcs])
+    return answ[0]
 
 
 def make_matrix(predict_data, real_data):
@@ -58,7 +56,7 @@ def make_recall_prec_fscore(predict_data, real_data):
 if __name__ == '__main__':
 
     model_addr = sys.argv[1]
-    ldamodel, dictionary, svc = load_models(model_addr)
+    ldamodel, dictionary, svm = load_models(model_addr)
 
     data_addr = sys.argv[2]
     stop_words = open('files/stopwords-fa.txt', 'r', encoding='utf-8').read().split('\n')

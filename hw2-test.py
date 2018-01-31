@@ -2,7 +2,6 @@ import logging
 import pickle
 import time
 
-import gensim
 import numpy as np
 import sklearn
 
@@ -15,19 +14,17 @@ class SupervisedData:
 
 
 def load_models(addr):
-    ldamodell = gensim.models.LdaModel.load('files/lda.model')
-    dictionaryl = gensim.corpora.Dictionary.load('files/lda_dictionary.dict')
     pickle_ins = open(addr, "rb")
     svcl = pickle.load(pickle_ins)
 
-    return ldamodell, dictionaryl, svcl
+    return svcl
 
 
 def test_data(dat):
     # arr = np.array(dat.topics).reshape(1, -1)  # these two format are equal but format below is more readable!
     arr = [dat.topics]
     answ = svm.predict(arr)
-    print('answer is : ', answ[0])
+    # print('answer is : ', answ[0])
     return answ[0]
 
 
@@ -57,7 +54,7 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
     model_addr = 'files/svm.pickle'
-    ldamodel, dictionary, svm = load_models(model_addr)
+    svm = load_models(model_addr)
 
     pickle_in = open("files/random_datas.pickle", "rb")
     datas = pickle.load(pickle_in)
@@ -68,21 +65,25 @@ if __name__ == '__main__':
 
     ans = list()
     log = ''
-    for i in range(10):
+    for i in range(TEST_SIZE):
         ans.append(test_data(test_set[i]))
         log += str(ans)
-        if i != 10:
+        if i != TEST_SIZE - 1:
             log += '\n'
 
+    '''
     file = open('data/labels.txt', 'w', encoding='utf-8')
     file.write(log)
 
     # label_addr = sys.argv[3]
+    '''
 
     tag = []
-    for i in range(10):
+    for i in range(TEST_SIZE):
         tag.append(test_set[i].label)
 
-    cnfs_matrix = make_matrix(ans, tag)
-    print(cnfs_matrix)
+    # cnfs_matrix = make_matrix(ans, tag)
+    # print(cnfs_matrix)
     print(make_recall_prec_fscore(ans, tag))
+
+    print('time: ', time.time() - start_time, "s")
