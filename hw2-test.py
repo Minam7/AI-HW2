@@ -41,7 +41,10 @@ def make_recall_prec_fscore(predict_data, real_data):
     mic = sklearn.metrics.precision_recall_fscore_support(np_tag, np_ans, average='micro')
     wei = sklearn.metrics.precision_recall_fscore_support(np_tag, np_ans, average='weighted')
 
-    return mac, mic, wei
+    w = sklearn.metrics.classification_report(np_tag, np_ans,
+                                              target_names=['class 1', 'class 2', 'class 3', 'class 5', 'class 8',
+                                                            'class 10', 'class 11', 'class 13', 'class 16'])
+    return mac, mic, wei, w
 
 
 if __name__ == '__main__':
@@ -82,14 +85,35 @@ if __name__ == '__main__':
     for i in range(TEST_SIZE):
         tag.append(test_set[i].label)
 
-    # cnfs_matrix = make_matrix(ans, tag)
-    # print(cnfs_matrix)
-    print(make_recall_prec_fscore(ans, tag))
+    cnfs_matrix = make_matrix(ans, tag)
+    print(cnfs_matrix)
+    svm_macro, svm_micro, svm_weighted, report = make_recall_prec_fscore(ans, tag)
+    print(report)
+
+    print('================================')
+
+    print('micro', svm_micro)
+    print('macro', svm_macro)
+    print('weighted', svm_weighted)
 
     print('time: ', time.time() - start_time, "s")
 
     # last output
-    # ((0.5879644591207307, 0.586932206092008, 0.5826451872508303, None),
-    # (0.5872916666666667, 0.5872916666666667, 0.5872916666666667, None),
-    # (0.5890882388987375, 0.5872916666666667, 0.5834035366368086, None))
-    # time: 93.52888178825378
+    # micro(0.5872916666666667, 0.5872916666666667, 0.5872916666666667, None)
+    # macro(0.5879644591207307, 0.586932206092008, 0.5826451872508303, None)
+    # weighted(0.5890882388987375, 0.5872916666666667, 0.5834035366368086, None)
+    # time: 93.74098205566406 s
+
+    # -----------------------------------------------
+    #             precision    recall  f1-score   support
+
+    # class 1        0.48      0.37      0.42      1588
+    # class 2        0.41      0.53      0.46      1603
+    # class 3        0.50      0.45      0.48      1623
+    # class 5        0.63      0.62      0.63      1563
+    # class 8        0.42      0.37      0.39      1549
+    # class 10       0.70      0.62      0.66      1626
+    # class 11       0.86      0.91      0.89      1598
+    # class 13       0.70      0.60      0.65      1675
+    # class 16       0.58      0.80      0.68      1575
+# avg / total       0.59      0.59      0.58     14400
