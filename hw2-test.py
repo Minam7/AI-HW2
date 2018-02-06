@@ -37,6 +37,8 @@ def make_matrix(predict_data, real_data):
 def make_recall_prec_fscore(predict_data, real_data):
     np_ans = np.array(predict_data)
     np_tag = np.array(real_data)
+
+    acc = sklearn.metrics.accuracy_score(np_tag, np_ans)
     mac = sklearn.metrics.precision_recall_fscore_support(np_tag, np_ans, average='macro')
     mic = sklearn.metrics.precision_recall_fscore_support(np_tag, np_ans, average='micro')
     wei = sklearn.metrics.precision_recall_fscore_support(np_tag, np_ans, average='weighted')
@@ -44,7 +46,7 @@ def make_recall_prec_fscore(predict_data, real_data):
     w = sklearn.metrics.classification_report(np_tag, np_ans,
                                               target_names=['class 1', 'class 2', 'class 3', 'class 5', 'class 8',
                                                             'class 10', 'class 11', 'class 13', 'class 16'])
-    return mac, mic, wei, w
+    return acc, mac, mic, wei, w
 
 
 if __name__ == '__main__':
@@ -87,11 +89,12 @@ if __name__ == '__main__':
 
     cnfs_matrix = make_matrix(ans, tag)
     print(cnfs_matrix)
-    svm_macro, svm_micro, svm_weighted, report = make_recall_prec_fscore(ans, tag)
+    acc, svm_macro, svm_micro, svm_weighted, report = make_recall_prec_fscore(ans, tag)
     print(report)
 
     print('================================')
 
+    print('acc', acc)
     print('micro', svm_micro)
     print('macro', svm_macro)
     print('weighted', svm_weighted)

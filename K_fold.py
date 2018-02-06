@@ -12,10 +12,12 @@ class SupervisedData:
         self.topics = None
 
 model_addr = sys.argv[1]
+# model_addr = 'files/svm.pickle'
 pickle_in = open(model_addr, "rb")
 datas = pickle.load(pickle_in)
 
 data_addr = sys.argv[2]
+# data_addr = 'files/random_datas.pickle'
 pickle_in2 = open(data_addr, "rb")
 svc = pickle.load(pickle_in2)
 
